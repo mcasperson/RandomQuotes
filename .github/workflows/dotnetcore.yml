@@ -128,6 +128,7 @@ jobs:
         tag_name: ${{ steps.determine_version.outputs.semVer }}+run${{ github.run_number }}-attempt${{ github.run_attempt }}
         draft: 'false'
         prerelease: 'false'
+        target_commitish: ${{ github.sha }}
     - name: Push to Octopus
       uses: OctopusDeploy/push-package-action@v1.1.1
       with:
