@@ -63,7 +63,7 @@ jobs:
         reporter: dotnet-trx
         fail-on-error: 'false'
     - name: Publish
-      run: dotnet publish --configuration Release /p:AssemblyVersion=${{ steps.determine_version.outputs.fullSemVer }}
+      run: dotnet publish --configuration Release /p:AssemblyVersion=${{ steps.determine_version.outputs.assemblySemVer }}
     - id: package
       name: Package
       run: |
@@ -91,11 +91,11 @@ jobs:
           octo pack \
           --basePath ${path} \
           --id ${projectname} \
-          --version ${{ steps.determine_version.outputs.semVer }} \
+          --version ${{ steps.determine_version.outputs.majorMinorPatch }} \
           --format zip \
           --overwrite
-          packages=(${packages[@]} "${projectname}.${{ steps.determine_version.outputs.semVer }}.zip")
-          versions=(${versions[@]} "${projectname}:${{ steps.determine_version.outputs.semVer }}")
+          packages=(${packages[@]} "${projectname}.${{ steps.determine_version.outputs.majorMinorPatch }}.zip")
+          versions=(${versions[@]} "${projectname}:${{ steps.determine_version.outputs.majorMinorPatch }}")
         done
         # Join the array with commas
         printf -v joined "%s," "${packages[@]}"
@@ -120,7 +120,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: ${{ steps.package.outputs.artifacts_new_line }}
-        tag_name: ${{ steps.determine_version.outputs.fullSemVer }}-run${{ github.run_number }}-attempt${{ github.run_attempt }}
+        tag_name: ${{ steps.determine_version.outputs.major }}.${{ steps.determine_version.outputs.minor }}.${{ steps.determine_version.outputs.patch }}-run${{ github.run_number }}-attempt${{ github.run_attempt }}
         draft: 'false'
         prerelease: 'false'
     - name: Push to Octopus
@@ -136,7 +136,7 @@ jobs:
         octopus_api_key: ${{ secrets.OCTOPUS_API_TOKEN }}
         octopus_project: dotnetcore1application
         octopus_server: ${{ secrets.OCTOPUS_SERVER_URL }}
-        push_version: ${{ steps.determine_version.outputs.fullSemVer }}
+        push_version: ${{ steps.determine_version.outputs.majorMinorPatch }}
         push_package_ids: dotnetcore1application
         push_overwrite_mode: OverwriteExisting
         output_path: octopus
