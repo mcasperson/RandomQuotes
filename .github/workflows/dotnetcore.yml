@@ -120,7 +120,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: ${{ steps.package.outputs.artifacts_new_line }}
-        tag_name: ${{ steps.determine_version.outputs.fullSemVer }}.{{ github.run_attempt }}
+        tag_name: ${{ steps.determine_version.outputs.fullSemVer }}-run${{ inputs.run_number }}-attempt${{ github.run_attempt }}
         draft: 'false'
         prerelease: 'false'
     - name: Push to Octopus
