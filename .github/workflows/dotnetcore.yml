@@ -63,7 +63,7 @@ jobs:
         reporter: dotnet-trx
         fail-on-error: 'false'
     - name: Publish
-      run: dotnet publish --configuration Release /p:AssemblyVersion=${{ steps.determine_version.outputs.semVer }}
+      run: dotnet publish --configuration Release /p:AssemblyVersion=${{ steps.determine_version.outputs.fullSemVer }}
     - id: package
       name: Package
       run: |
