@@ -119,8 +119,8 @@ jobs:
     - name: Tag Release
       uses: mathieudutour/github-tag-action@v6.0
       with:
-        'custom_tag ': ${{ steps.determine_version.outputs.majorMinorPatch }}
-        'github_token ': ${{ secrets.GITHUB_TOKEN }}
+        custom_tag: ${{ steps.determine_version.outputs.majorMinorPatch }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
