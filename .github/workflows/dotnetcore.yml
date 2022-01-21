@@ -18,7 +18,10 @@ jobs:
     - name: Set up DotNET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.402
+        dotnet-version: |-
+          3.1.x
+          5.0.x
+          6.0.x
     - name: Install GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.7
       with:
@@ -101,14 +104,14 @@ jobs:
         printf -v joined "%s," "${packages[@]}"
         # Save the list of packages as an output variable
         echo "::set-output name=artifacts::${joined%,}"
-        # Do the same again, but use new lines as the separator
+        # Do the same again, but use new lines as the separator. These will be used when uploading packages to the GitHub release.
         printf -v joinednewline "%s\n" "${packages[@]}"
         # https://trstringer.com/github-actions-multiline-strings/
         # Multiline strings require some care in a workflow
         joinednewline="${joinednewline//'%'/'%25'}"
         joinednewline="${joinednewline//$'\n'/'%0A'}"
         joinednewline="${joinednewline//$'\r'/'%0D'}"
-        # Now build a new line separated list of versions
+        # Now build a new line separated list of versions. These will be used when creating an Octopus release.
         printf -v versionsjoinednewline "%s\n" "${versions[@]}"
         versionsjoinednewline="${versionsjoinednewline//'%'/'%25'}"
         versionsjoinednewline="${versionsjoinednewline//$'\n'/'%0A'}"
@@ -140,17 +143,17 @@ jobs:
       uses: xo-energy/action-octopus-build-information@v1.1.2
       with:
         octopus_api_key: ${{ secrets.OCTOPUS_API_TOKEN }}
-        octopus_project: dotnetcore1application
+        octopus_project: RandomQuotes
         octopus_server: ${{ secrets.OCTOPUS_SERVER_URL }}
         push_version: ${{ steps.determine_version.outputs.semVer }}
-        push_package_ids: dotnetcore1application
+        push_package_ids: RandomQuotes
         push_overwrite_mode: OverwriteExisting
         output_path: octopus
     - name: Create Octopus Release
       uses: OctopusDeploy/create-release-action@v1.1.1
       with:
         api_key: ${{ secrets.OCTOPUS_API_TOKEN }}
-        project: dotnetcore1application
+        project: RandomQuotes
         server: ${{ secrets.OCTOPUS_SERVER_URL }}
         deploy_to: Development
         packages: ${{ steps.package.outputs.versions_new_line }}
